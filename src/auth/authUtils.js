@@ -98,8 +98,16 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
 const verifyJWT = async (token, keySecret) => {
   return await JWT.verify(token, keySecret);
 };
+
+const createActivattionToken = async (user) => {
+  return JWT.sign(user, process.env.ACTIVATION_SECRET, {
+    expiresIn: "5m",
+  });
+  
+};
 module.exports = {
   createTokenPair,
   verifyJWT,
   authenticationV2,
+  createActivattionToken,
 };

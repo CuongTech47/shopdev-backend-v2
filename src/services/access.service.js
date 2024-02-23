@@ -5,8 +5,9 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const { BadRequestError } = require("../core/error.response");
 const userModel = require("../models/user.model");
-const KeyTokenService = require("./keyToken.service");
-const { createTokenPair } = require("../auth/authUtils");
+const {cacheEmailData} = require('./redis.service')
+const { createTokenPair, createActivattionToken } = require("../auth/authUtils");
+const { sendMailActivattionUser } = require("./sendMail.service");
 const RoleUser = {
   USER: "USER",
   SHOP: "SHOP",
@@ -31,39 +32,47 @@ class AccessService {
       roles: [RoleUser.USER],
     };
 
-    const newUser = await userModel.create(user);
 
-    if (newUser) {
-      const privateKey = crypto.randomBytes(64).toString("hex");
-      const publicKey = crypto.randomBytes(64).toString("hex");
-      console.log({ privateKey, publicKey });
 
-      const keyStore = await KeyTokenService.createKeyToken({
-        userId: newUser._id,
-        publicKey: publicKey,
-        privateKey: privateKey,
-      });
+    const activationToken = await createActivattionToken(user)
 
-      if (!keyStore) {
-        throw new BadRequestError("Shop already registered!");
-      }
-      // Tạo cặp token
-      const payload = {
-        userId: newUser._id,
-        email,
-      };
+    const activationUrl = `http://localhost:5173/activation/${activationToken}`
 
-      const tokens = await createTokenPair(payload,publicKey,privateKey)
-      console.log(`Created Token Success::`, tokens);
+    console.log("activationToken",activationToken);
 
-      return {
-        user:newUser,
-        tokens
-      }
+    await sendMailActivattionUser(user,activationUrl)
 
-    }
+  
+    // const newUser = await userModel.create(user);
 
-    
+    // if (newUser) {
+    //   const privateKey = crypto.randomBytes(64).toString("hex");
+    //   const publicKey = crypto.randomBytes(64).toString("hex");
+    //   // console.log({ privateKey, publicKey });
+
+    //   const keyStore = await KeyTokenService.createKeyToken({
+    //     userId: newUser._id,
+    //     publicKey: publicKey,
+    //     privateKey: privateKey,
+    //   });
+
+    //   if (!keyStore) {
+    //     throw new BadRequestError("Shop already registered!");
+    //   }
+    //   // Tạo cặp token
+    //   const payload = {
+    //     userId: newUser._id,
+    //     email,
+    //   };
+
+    //   const tokens = await createTokenPair(payload, publicKey, privateKey);
+    //   // console.log(`Created Token Success::`, tokens);
+
+    //   return {
+    //     user: newUser,
+    //     tokens,
+    //   };
+    // }
   };
 }
 module.exports = AccessService;

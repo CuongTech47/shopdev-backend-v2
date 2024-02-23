@@ -15,7 +15,7 @@ class AccessController {
     }
 
     new CREATED({
-      message : 'Registed OK!',
+      message : 'Vui lòng kiểm tra email để kích hoạt tài khoản',
       metadata: await AccessService.signUp({
         name: req.body.name,
         email: req.body.email,

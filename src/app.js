@@ -7,7 +7,7 @@ const compression = require('compression')
 
 const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
-
+const redis = require('./configs/redis.conf')
 const app = express()
 
 
@@ -23,6 +23,7 @@ app.use(express.urlencoded({
 }))
 //init db
 require('./dbs/init.mongodb')
+redis.status
 
 // init routes
 app.use('',require('./routes'))

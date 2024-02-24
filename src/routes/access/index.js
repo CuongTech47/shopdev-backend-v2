@@ -7,6 +7,7 @@ const accessController = require('../../controllers/access.controller')
 const router = express.Router()
 
 // signUp 
-router.post('/user/signup',uploadDisk.single("file"),asyncHandler(accessController.signUp))
+router.post('/user/signup',uploadDisk.single('avatar'),asyncHandler(accessController.signUp))
+router.post('/user/activation',asyncHandler(accessController.activation))
 
 module.exports = router

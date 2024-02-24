@@ -2,7 +2,11 @@
 
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("../helpers/asyncHandler");
-const { AuthFailureError, NotFoundError } = require("../core/error.response");
+const {
+  AuthFailureError,
+  NotFoundError,
+  BadRequestError,
+} = require("../core/error.response");
 
 const { findByUserId } = require("../services/keyToken.service");
 const HEADER = {
@@ -96,14 +100,17 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
 });
 
 const verifyJWT = async (token, keySecret) => {
-  return await JWT.verify(token, keySecret);
+  try {
+    return await JWT.verify(token, keySecret);
+  } catch (error) {
+    throw new BadRequestError("Token da het han trong 5p");
+  }
 };
 
 const createActivattionToken = async (user) => {
   return JWT.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5m",
   });
-  
 };
 module.exports = {
   createTokenPair,

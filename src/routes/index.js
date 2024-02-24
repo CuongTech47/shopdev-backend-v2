@@ -5,7 +5,7 @@ const { apiKey, permisstion } = require('../auth/checkAuth')
 
 const router = express.Router()
 
-router.use(apiKey)
+// router.use(apiKey)
 
 // router.use(permisstion('0000'))
 

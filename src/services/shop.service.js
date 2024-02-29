@@ -1,15 +1,15 @@
 const { getUserLoginInfo } = require("./redis.service");
 
-class UserService {
-  static loadUser = async ({ userId }) => {
+class ShopService {
+  static loadShop = async ({ userId }) => {
     const userDataString = await getUserLoginInfo(userId);
 
     const userData = JSON.parse(userDataString);
 
     return {
-      user: userData,
+      shop: userData,
     };
   };
 }
 
-module.exports = UserService;
+module.exports = ShopService;

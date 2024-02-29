@@ -3,20 +3,20 @@
 const sendMail = require("../configs/mailer.conf");
 const { connectToRabbitMQ } = require("../dbs/init_rabbit");
 
-class ConsumerMailSerice {
+class ConsumerMailService {
   static receiveEmailFromQueue = async () => {
     try {
       const { channel, connection } = await connectToRabbitMQ();
       const queue = "email_queue";
       await channel.assertQueue(queue, { durable: false });
-      console.log("Waiting for messages in queue...");
-      channel.consume(queue, async (message) => {
+      console.log("Waiting for messages in queue mail...");
+      channel.consume(queue, (message) => {
         if (message !== null) {
           const emailData = JSON.parse(message.content.toString());
           console.log("Received email from queue:", emailData);
           // Gửi email từ dữ liệu emailData
           // sendEmail(emailData);
-          await sendMail({
+          sendMail({
             email: emailData.email,
             subject: emailData.subject,
             message: emailData.message,
@@ -32,4 +32,4 @@ class ConsumerMailSerice {
   };
 }
 
-module.exports = ConsumerMailSerice;
+module.exports = ConsumerMailService;

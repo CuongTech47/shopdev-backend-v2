@@ -12,7 +12,8 @@ const keyTokenSchema = new Schema({
     user:{
         type : Schema.Types.ObjectId,
         require : true,
-        ref : 'User'
+        ref : 'User',
+        // ref : 'Shop'
     },
     publicKey : {
         type:String,

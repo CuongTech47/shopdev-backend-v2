@@ -9,6 +9,7 @@ const {
 } = require("../core/error.response");
 
 const { findByUserId } = require("../services/keyToken.service");
+const shopKeyTokenService = require("../services/shopKeyToken.service");
 const HEADER = {
   API_KEY: "x-api-key",
   CLIENT_ID: "x-client-id",
@@ -99,6 +100,44 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
   }
 });
 
+const authenticationForShop = asyncHandler(async (req, res, next) => {
+  const shopId = req.headers[HEADER.CLIENT_ID];
+  if (!shopId) throw new AuthFailureError("Invalid Request");
+  const keyStore = await shopKeyTokenService.findByUserId(shopId);
+  if (!keyStore) throw new NotFoundError("Not Found shop keyStore");
+
+  if (req.headers[HEADER.REFRESHTOKEN]) {
+    try {
+      const refreshToken = req.headers[HEADER.REFRESHTOKEN];
+      const decodeShop = JWT.verify(refreshToken, keyStore.privateKey);
+
+      if (shopId !== decodeShop.shopId)
+        throw new AuthFailureError("Invalid ShopId");
+      req.keyStore = keyStore;
+      req.shop = decodeShop;
+      req.refreshToken = refreshToken;
+
+      return next();
+    } catch (error) {
+      throw error;
+    }
+  }
+  const accessToken = req.headers[HEADER.AUTHORIZATION];
+  if (!accessToken) throw new AuthFailureError("Invalid Request");
+
+  try {
+    const decodeShop = JWT.verify(accessToken, keyStore.publicKey);
+
+    if (shopId !== decodeShop.shopId)
+      throw new AuthFailureError("Invalid UserId");
+    req.keyStore = keyStore;
+    req.shop = decodeShop; // { userId , email}
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
 const verifyJWT = async (token, keySecret) => {
   try {
     return await JWT.verify(token, keySecret);
@@ -107,7 +146,7 @@ const verifyJWT = async (token, keySecret) => {
   }
 };
 
-const createActivattionToken = async (user) => {
+const createActivationToken = async (user) => {
   return JWT.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5m",
   });
@@ -116,5 +155,6 @@ module.exports = {
   createTokenPair,
   verifyJWT,
   authenticationV2,
-  createActivattionToken,
+  createActivationToken,
+  authenticationForShop
 };

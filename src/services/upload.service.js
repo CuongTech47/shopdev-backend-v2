@@ -11,9 +11,10 @@ class UploadService {
       return {
         public_id: result.public_id,
         url: await cloudinary.url(result.public_id, {
-          height: 100,
-          width: 100,
+          height: 600,
+          width: 600,
           format: "jpg",
+          crop: "fill",
         }),
       };
     } catch (error) {
@@ -22,7 +23,6 @@ class UploadService {
   };
   // upload Multiple files
   static uploadMultipleImageFromLocal = async (files, folderName) => {
-    
     try {
       const uploadedUrls = [];
       for (let i = 0; i < files.length; i++) {
@@ -33,9 +33,10 @@ class UploadService {
         uploadedUrls.push({
           public_id: result.public_id,
           url: await cloudinary.url(result.public_id, {
-            height: 100,
-            width: 100,
+            height: 500,
+            width: 500,
             format: "jpg",
+            crop: "fill",
           }),
         });
       }

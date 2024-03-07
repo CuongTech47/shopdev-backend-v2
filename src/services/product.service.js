@@ -17,10 +17,8 @@ class ProductService {
       throw new BadRequestError("Shop is invalid!", 400);
     }
 
-  
-
     const imagesCloud = await uploadMultipleImageFromLocal(
-        images,
+      images,
       `products/${shop._id}`
     );
 
@@ -34,6 +32,7 @@ class ProductService {
       stock: stock,
       images: imagesCloud,
       shopId: new Types.ObjectId(shopId),
+      shop
     };
 
     const product = await productModel.create(productData);
@@ -42,17 +41,29 @@ class ProductService {
       product,
     };
   };
-  static getAllProductForShop = async({shopId}) => {
-    const products = await productModel.find({shopId : shopId})
+  static getAllProductForShop = async ({ shopId }) => {
+    const products = await productModel.find({ shopId: shopId });
     return {
-        products
-    }
-  }
-  static deleteProductForShop = async({productId})=>{
-    const product = await productModel.findByIdAndDelete(productId)
-    if(!product) throw new NotFoundError(`Không tồn tại product id ${productId} `,404)
-    return product
-  }
+      products,
+    };
+  };
+  static deleteProductForShop = async ({ productId }) => {
+    const product = await productModel.findByIdAndDelete(productId);
+    if (!product)
+      throw new NotFoundError(`Không tồn tại product id ${productId} `, 404);
+    return product;
+  };
+
+  // get all products
+  static getAllProducts = async () => {
+    const products = await productModel.find().sort({
+      createdAt: -1,
+    });
+
+    return {
+      products,
+    };
+  };
 }
 
 module.exports = ProductService;

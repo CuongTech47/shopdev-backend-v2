@@ -36,7 +36,7 @@ class ProductController {
   };
 
   getAllProductForShop = async (req, res, next) => {
-    console.log(req.params);
+    // console.log(req.params);
     new SuccessResponse({
       message: "Get all product for shop success",
       metadata: await productService.getAllProductForShop({
@@ -45,12 +45,19 @@ class ProductController {
     }).send(res);
   };
 
+  getAllProducts = async (req, res, next) => {
+    new SuccessResponse({
+      message: "Get all products success",
+      metadata: await productService.getAllProducts(),
+    }).send(res);
+  };
+
   deleteProductForShop = async (req, res, next) => {
     console.log(req.params);
     new SuccessResponse({
       message: "Delete product for shop success",
       metadata: await productService.deleteProductForShop({
-        productId: req.params.id
+        productId: req.params.id,
       }),
     }).send(res);
   };

@@ -70,6 +70,10 @@ const productSchema = new Schema(
       ref: "Shop",
       required: true,
     },
+    shop: {
+      type: Object,
+      required: true,
+    },
     sold_out: {
       type: Number,
       default: 0,

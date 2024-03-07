@@ -12,8 +12,7 @@ const uploadDisk = multer({
       cb(null, "./src/uploads/");
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix =
-        Date.now() + "-" + Math.round.apply(Math.random() * 1e9);
+      const uniqueSuffix = Date.now() + "-" + Math.floor(Math.random() * 1e9);
       const filename = file.originalname.split(".")[0];
       cb(null, `${filename}-${uniqueSuffix}.png`);
     },

@@ -1,11 +1,9 @@
 "use strict";
 
-const sendMail = require("../configs/mailer.conf");
-const { BadRequestError } = require("../core/error.response");
-const consumerMailService = require("./consumerMail.service");
+
+const { receiveEmailFromQueue } = require("./consumerMail.service.js");
 const { sendEmailToQueue } = require("./producerMail.service");
-const { cacheEmailData } = require("./redis.service");
-const { findByEmail } = require("./user.service");
+
 
 class MailService {
   static sendMailActivationUser = async (user, activationUrl) => {
@@ -18,8 +16,7 @@ class MailService {
     };
 
     await sendEmailToQueue(emailData);
-    // await receiveEmailFromQueue();
-    await consumerMailService.receiveEmailFromQueue();
+    await receiveEmailFromQueue();
   };
   static sendMailActivationShop = async (shop, activationUrl) => {
     const { name, email } = shop;

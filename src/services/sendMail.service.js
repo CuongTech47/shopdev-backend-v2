@@ -2,7 +2,7 @@
 
 const sendMail = require("../configs/mailer.conf");
 const { BadRequestError } = require("../core/error.response");
-const { receiveEmailFromQueue } = require("./consumerMail.service");
+const consumerMailService = require("./consumerMail.service");
 const { sendEmailToQueue } = require("./producerMail.service");
 const { cacheEmailData } = require("./redis.service");
 const { findByEmail } = require("./user.service");
@@ -18,7 +18,8 @@ class MailService {
     };
 
     await sendEmailToQueue(emailData);
-    await receiveEmailFromQueue();
+    // await receiveEmailFromQueue();
+    await consumerMailService.receiveEmailFromQueue();
   };
   static sendMailActivationShop = async (shop, activationUrl) => {
     const { name, email } = shop;

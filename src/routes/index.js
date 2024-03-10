@@ -7,6 +7,12 @@ const router = express.Router()
 
 // router.use(apiKey)
 
+router.get('/',(req,res)=>{
+    res.json({
+        message:'Welcome to Shop-Dev API'
+    })
+})
+
 // router.use(permisstion('0000'))
 router.use('/api/v1/order',require('./order'))
 router.use('/api/v1/payment',require('./payment'))

@@ -19,4 +19,13 @@ router.put('/update-user-info',asyncHandler(userController.updateUserInfo))
 router.put('/update-user-avatar',uploadDisk.single('avatar'),asyncHandler(userController.updateUserAvatar))
 
 
+// update user addresses
+router.put('/update-user-addresses',asyncHandler(userController.updateUserAddresses))
+
+// delete user addresses
+router.delete('/delete-user-address/:id',asyncHandler(userController.deleteUserAddresses))
+
+// update user password
+router.put('/update-user-password',asyncHandler(userController.updateUserPassword))
+
 module.exports = router;

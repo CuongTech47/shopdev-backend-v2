@@ -41,12 +41,11 @@ const RoleShop = {
 };
 class AccessService {
   static signUp = async ({ name, email, password, avatar }) => {
-    try {
+
       const existingUser = await userModel.findOne({ email }).lean();
       if (existingUser) {
         throw new BadRequestError("User already exists", 400);
       }
-
       const passwordHash = await bcrypt.hash(password, 10);
 
       const user = {
@@ -61,9 +60,7 @@ class AccessService {
       const activationUrl = `http://localhost:5173/user/activation/${activationToken}`;
 
       await sendMailActivationUser(user, activationUrl);
-    } catch (error) {
-      console.log(error);
-    }
+
   };
 
   // xac thuc nguoi dung
@@ -132,7 +129,7 @@ class AccessService {
     const foundUser = await userModel.findOne({ email }, "+password").lean();
     console.log("userData", foundUser);
 
-    if (!foundUser) throw new BadRequestError("Shop not resgisted!");
+    if (!foundUser) throw new BadRequestError("User not resgisted!");
     const match = await bcrypt.compare(password, foundUser.password);
     if (!match) throw new AuthFailureError("Authentication errors");
 
@@ -164,11 +161,11 @@ class AccessService {
   };
 
   // dang xuat shop
-  static logoutShop = async (keyStore,shopId) => {
+  static logoutShop = async (keyStore, shopId) => {
     const delKey = await shopKeyTokenService.removeKeyById(keyStore._id);
-    const delKeyResdis = await RedisService.delKeyUserLogin(shopId)
+    const delKeyResdis = await RedisService.delKeyUserLogin(shopId);
     // console.log(delKey);
-    return {delKey,delKeyResdis};
+    return { delKey, delKeyResdis };
   };
 
   // dang ki shop

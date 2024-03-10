@@ -16,7 +16,6 @@ class UserService {
   };
 
   static updateUserInfo = async ({ email, password, phoneNumber, name }) => {
-    
     const user = await userModel.findOne({ email: email }).select("+password");
 
     if (!user) {
@@ -64,6 +63,91 @@ class UserService {
       user: existsUser,
     };
   };
+
+  static updateUserAddresses = async (
+    { email, userId },
+    { addressType, province, district, ward, address1 }
+  ) => {
+    const user = await userModel.findOne({ email: email });
+    console.log(userId);
+    const sameTypeAddress = user.addresses.find(
+      (address) => address.addressType === addressType
+    );
+    if (sameTypeAddress) {
+      throw new BadRequestError(`${addressType} address already exists`);
+    }
+
+    const existsAddress = user.addresses.find(
+      (address) => address._id === userId
+    );
+
+    if (existsAddress) {
+      Object.assign(existsAddress, {
+        province,
+        district,
+        address1,
+        ward,
+        addressType,
+      });
+    } else {
+      // add the new address to the array
+      user.addresses.push({ province, district, address1, addressType, ward });
+    }
+    await user.save();
+
+    await saveUserLoginInfo(user._id, user);
+
+    return {
+      user,
+    };
+  };
+
+  static deleteUserAddresses = async ({ userId }, { addressId }) => {
+    
+
+    await userModel.updateOne(
+      { _id: userId },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+
+    const user = await userModel.findById(userId)
+
+    await saveUserLoginInfo(user._id, user);
+
+
+    
+
+    return {
+      user
+    }
+    
+  };
+
+
+  static updateUserPassword = async ({email} , {oldPassword,confirmPassword,newPassword}) => {
+    const user = await userModel.findOne({email}).select('+password')
+
+    const isPasswordMathed = await bcrypt.compare(oldPassword,user.password)
+
+
+    if(!isPasswordMathed){
+      throw new BadRequestError('Mật khẩu cũ không đúng')
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestError('Mật khẩu không khớp')
+    }
+
+    user.password = newPassword
+
+    await user.save()
+
+    await saveUserLoginInfo(user._id, user);
+
+    return {
+      user
+    }
+  }
 }
 
 module.exports = UserService;

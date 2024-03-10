@@ -5,32 +5,16 @@ const productService = require("../services/product.service");
 
 class ProductController {
   createProduct = async (req, res, next) => {
-    console.log(req.body);
-    let images = [];
-
-    if (!req.body.images) {
-      throw new BadRequestError("hình ảnh bị thiếu");
+    const { files } = req;
+    if (!files || Object.keys(files).length === 0) {
+      throw new BadRequestError("File not found");
     }
-    if (typeof req.body.images === "string") {
-      // Nếu chỉ có một hình ảnh, chúng ta đưa nó vào mảng images
-      images.push(req.body.images);
-    } else if (Array.isArray(req.body.images)) {
-      // Nếu là một mảng, chúng ta duyệt qua từng phần tử và đưa vào mảng images
-      for (const image of req.body.images) {
-        images.push(image);
-      }
-    } else {
-      // Nếu không phải là một chuỗi hoặc mảng, báo lỗi
-      throw new BadRequestError("Định dạng hình ảnh không hợp lệ");
-    }
-
-    // console.log("images-product", images);
     new SuccessResponse({
       message: "Create Product Success",
       metadata: await productService.createProduct(
         req.shop,
         { ...req.body },
-        images
+          files.map(file => file.path)
       ),
     }).send(res);
   };

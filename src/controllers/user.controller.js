@@ -38,6 +38,29 @@ class UserController {
       ),
     }).send(res);
   };
+
+  updateUserAddresses = async ( req , res , next) => {
+    
+    new SuccessResponse({
+      message: "Cập nhật thành công",
+      metadata: await UserService.updateUserAddresses({...req.user},req.body)
+    }).send(res)
+  }
+
+
+  deleteUserAddresses = async ( req , res , next) => {
+    new SuccessResponse({
+      message: "Cập nhật thành công",
+      metadata: await UserService.deleteUserAddresses({...req.user}, {addressId : req.params.id})
+    }).send(res)
+  }
+
+  updateUserPassword = async ( req , res , next) => {
+    new SuccessResponse({
+      message: "Cập nhật thành công",
+      metadata: await UserService.updateUserPassword({...req.user},req.body)
+    }).send(res)
+  }
 }
 
 module.exports = new UserController();

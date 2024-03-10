@@ -31,13 +31,20 @@ class CouponService {
     const coupon = await couponCodeModel.create(couponData)
 
     return {
-        coupon
+      coupounCode:coupon
     }
   };
   static getCouponCodeShop = async({shopId}) => {
     const coupons = await couponCodeModel.find({shopId:shopId})
     return {
-        coupons
+      couponCodes:coupons
+    }
+  }
+
+  static getCouponValue = async(name) => {
+    const coupon = await couponCodeModel.findOne({name:name})
+    return {
+      couponCode : coupon
     }
   }
 }

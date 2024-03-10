@@ -13,7 +13,7 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      unique:true,
+      unique: true,
       required: [true, "Please enter your email!"],
     },
     password: {
@@ -27,21 +27,19 @@ const userSchema = new Schema(
     },
     addresses: [
       {
-        country: {
+        province: {
           type: String,
         },
-        city: {
+        district: {
+          type: String,
+        },
+        ward: {
           type: String,
         },
         address1: {
           type: String,
         },
-        address2: {
-          type: String,
-        },
-        zipCode: {
-          type: Number,
-        },
+
         addressType: {
           type: String,
         },

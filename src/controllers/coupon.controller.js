@@ -20,6 +20,13 @@ class CouponCodeController {
         })
     }).send(res)
   };
+
+    getCouponValue = async (req, res, next) => {
+        new SuccessResponse({
+            message: "Get Coupon Value Success",
+            metadata: await CouponService.getCouponValue(req.params.name)
+        }).send(res)
+    }
 }
 
 module.exports = new CouponCodeController();

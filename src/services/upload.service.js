@@ -24,17 +24,22 @@ class UploadService {
   // upload Multiple files
   static uploadMultipleImageFromLocal = async (files, folderName) => {
     try {
+
+
       const uploadedUrls = [];
       for (let i = 0; i < files.length; i++) {
         console.log(files[i]);
         const result = await cloudinary.uploader.upload(files[i], {
           folder: folderName,
+          quality: "auto:best", // Chất lượng tốt nhất
+          crop: "fill",
+          format: "jpg",
         });
         uploadedUrls.push({
           public_id: result.public_id,
           url: await cloudinary.url(result.public_id, {
-            height: 500,
-            width: 500,
+            height: 600,
+            width: 600,
             format: "jpg",
             crop: "fill",
           }),

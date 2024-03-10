@@ -1,8 +1,10 @@
 "use strict";
 const mongoose = require("mongoose");
 
-const { db : {host , name , port }} = require('../configs/mongodb.conf')
-const connectString = `mongodb://${host}:${port}/${name}`;
+const { db : {host , name , port , user , pass }} = require('../configs/mongodb.conf')
+const connectString = `mongodb+srv://${user}:${pass}@${host}/?retryWrites=true&w=majority&appName=Cluster0/${name}` ;
+console.log(connectString)
+// const connectString = "mongodb+srv://cuongdev47:cuonglov3@cluster0.evj7cnp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const { countConnect } = require('../helpers/check.connect')
 class Database {
     constructor() {
@@ -20,7 +22,7 @@ class Database {
         mongoose.connect(
             connectString , { maxPoolSize : 50} )
               .then((_) =>  console.log("Connected Mongodb Success", countConnect() ))
-              .catch((err) => console.log(`Error Connect!`))
+              .catch((err) => console.log(`Error Connect!`, err))
     }
 
     static getIntance() {

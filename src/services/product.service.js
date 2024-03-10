@@ -17,9 +17,11 @@ class ProductService {
       throw new BadRequestError("Shop is invalid!", 400);
     }
 
+
+
     const imagesCloud = await uploadMultipleImageFromLocal(
       images,
-      `products/${shop._id}`
+      `products/${shopId}`
     );
 
     const productData = {
